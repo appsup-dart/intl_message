@@ -1,5 +1,7 @@
 # intl_message
 
+[![Build Status](https://travis-ci.org/appsup-dart/intl_message.svg?branch=master)](https://travis-ci.org/appsup-dart/expressions)
+
 Parses and formats [ICU Message strings](http://userguide.icu-project.org/formatparse/messages).
 
 ## Usage
