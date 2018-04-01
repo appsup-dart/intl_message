@@ -213,7 +213,7 @@ main() async {
 
 
       expect(
-          new IntlMessage('The Eagle landed at {T, time} on {T, date, full}').format({"T": '1969-07-20 20:17:40 UTC'}),
+          new IntlMessage('The Eagle landed at {T, time} on {T, date, full}').format({"T": '1969-07-20 21:17:40'}),
           'The Eagle landed at 9:17:40 PM on Sunday, July 20, 1969');
 
     });
