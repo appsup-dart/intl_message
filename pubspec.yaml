@@ -1,0 +1,16 @@
+name: intl_message
+description: Parses and formats ICU Message strings.
+version: 0.1.0
+homepage: https://github.com/appsup-dart/intl_message
+author: Rik Bellens <rik.bellens@appsup.be>
+
+environment:
+  sdk: '>=1.20.1 <2.0.0'
+
+dependencies:
+  intl: ^0.15.2
+  petitparser: ^1.6.1
+  html: any
+
+dev_dependencies:
+  test: ^0.12.0
