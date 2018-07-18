@@ -67,7 +67,7 @@ class IcuParser {
   Parser get pluralClause =>
       (pluralKeyword & openCurly & interiorText & closeCurly).trim().permute([0, 2]);
   Parser get pluralClauses =>
-      pluralClause.plus().map((l)=>new Map.fromIterable(l, key: (v)=>v.first, value: (v)=>v.last));
+      pluralClause.plus().map((l)=>new Map<String,IntlMessage>.fromIterable(l, key: (v)=>v.first, value: (v)=>v.last));
   Parser get offset => (string("offset:")&digit().plus().flatten().map(int.parse)).pick(1);
   Parser get plural =>
       preface & pluralLiteral & comma & offset.optional() & pluralClauses & closeCurly;
@@ -80,7 +80,7 @@ class IcuParser {
   Parser get selectClause =>
       (simpleId.trim() & openCurly & interiorText & closeCurly).trim().permute([0, 2]);
   Parser get selectClauses =>
-      selectClause.plus().map((l)=>new Map.fromIterable(l, key: (v)=>v.first, value: (v)=>v.last));
+      selectClause.plus().map((l)=>new Map<String,IntlMessage>.fromIterable(l, key: (v)=>v.first, value: (v)=>v.last));
   Parser get generalSelect =>
       preface & selectLiteral & comma & selectClauses & closeCurly;
   Parser get intlSelect => generalSelect
@@ -89,7 +89,8 @@ class IcuParser {
 
   Parser get custom =>
       (preface & id & (comma & icuText.plus().flatten().trim()).pick(1).star() & closeCurly)
-          .map((values) => new CustomFormatMessage(values.first, values[1], values[2]));
+          .map((values) => new CustomFormatMessage(values.first, values[1],
+          values[2].map<String>((v)=>v as String).toList()));
 
   Parser get parameter => (openCurly & id & closeCurly).pick(1)
       .map((param) => new VariableSubstitution(param));
@@ -97,7 +98,7 @@ class IcuParser {
   Parser get variable => intlNumber | intlDate | intlTime | intlSelect | intlPlural | custom | parameter;
 
   Parser get simpleText => (messageText | variable).plus()
-      .map((l)=>new ComposedMessage(l));
+      .map((l)=>new ComposedMessage(l.map<IntlMessage>((v)=>v as IntlMessage).toList()));
 
   Parser get empty => epsilon().map((_) => new LiteralString(''));
 

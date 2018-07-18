@@ -30,7 +30,7 @@ abstract class IntlMessage {
 
   static T withFormatters<T>(Map<String,Function> formatters, T Function()function) {
     return runZoned(function, zoneValues: {
-      #IntlMessage.formatters: new Map.from(IntlMessage.formatters)..addAll(formatters)
+      #IntlMessage.formatters: new Map<String,Function>.from(IntlMessage.formatters)..addAll(formatters)
     });
   }
 

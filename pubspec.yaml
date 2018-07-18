@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   intl: ^0.15.2
-  petitparser: ^1.6.1
+  petitparser: ^1.7.6
 
 dev_dependencies:
   test: ^0.12.0
