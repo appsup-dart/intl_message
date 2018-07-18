@@ -23,22 +23,6 @@ int _n;
 int get _i => _n;
 int opt_precision; // Not currently used.
 
-/// Number of visible fraction digits. Always zero since we only support int.
-int get _v => 0;
-
-/// Number of visible fraction digits without trailing zeros. Always zero
-/// since we only support int.
-//int get _w => 0;
-
-/// The visible fraction digits in n, with trailing zeros. Always zero since
-/// we only support int.
-int get _f => 0;
-
-/// The visible fraction digits in n, without trailing zeros. Always zero since
-/// we only support int.
-int get _t => 0;
-
-
 
 // http://www.unicode.org/repos/cldr/trunk/common/supplemental/ordinals.xml
 
