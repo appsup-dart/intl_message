@@ -1,10 +1,8 @@
-
 part of intl_message;
-
 
 abstract class SubMessage implements IntlMessage {
   final Variable name;
-  final Map<String,IntlMessage> messages;
+  final Map<String, IntlMessage> messages;
 
   SubMessage(this.name, this.messages);
 
@@ -21,13 +19,13 @@ abstract class SubMessage implements IntlMessage {
   }
 
   @override
-  String toString() => "{$name, $_type, ${messages.keys.map((k)=>"$k {${messages[k]}}").join(" ")}";
-
+  String toString() =>
+      "{$name, $_type, ${messages.keys.map((k) => "$k {${messages[k]}}").join(" ")}";
 }
 
 class SelectMessage extends SubMessage {
-
-  SelectMessage(Variable name, Map<String, IntlMessage> messages) : super(name, messages);
+  SelectMessage(Variable name, Map<String, IntlMessage> messages)
+      : super(name, messages);
 
   @override
   String _index(v) => v;
@@ -37,9 +35,9 @@ class SelectMessage extends SubMessage {
 }
 
 class SelectOrdinalMessage extends PluralMessage {
-  SelectOrdinalMessage(Variable name, Map<String, IntlMessage> messages, {int offset: 0}) :
-        super(name, messages, offset: offset);
-
+  SelectOrdinalMessage(Variable name, Map<String, IntlMessage> messages,
+      {int offset: 0})
+      : super(name, messages, offset: offset);
 
   @override
   plural_rules.PluralCase _pluralCase(int howMany) {
@@ -53,22 +51,21 @@ class SelectOrdinalMessage extends PluralMessage {
 
   @override
   String get _type => "selectordinal";
-
 }
 
 class PluralMessage extends SubMessage {
-
   final int offset;
 
-  PluralMessage(Variable name, Map<String,IntlMessage> messages, {this.offset: 0}) : super(name,messages);
-
+  PluralMessage(Variable name, Map<String, IntlMessage> messages,
+      {this.offset: 0})
+      : super(name, messages);
 
   @override
   String format(Map<String, dynamic> args) {
     var s = super.format(args);
-    return s.replaceAllMapped(new RegExp(r"(^|[^\\])#"), (m)=>m.group(1)+new NumberFormat().format(name.get(args)-offset));
+    return s.replaceAllMapped(new RegExp(r"(^|[^\\])#"),
+        (m) => m.group(1) + new NumberFormat().format(name.get(args) - offset));
   }
-
 
   plural_rules.PluralCase _pluralCase(int howMany) {
     var locale = Intl.getCurrentLocale();
@@ -79,10 +76,11 @@ class PluralMessage extends SubMessage {
     return plural_rules.pluralRules[verifiedLocale]();
   }
 
-
   @override
   String _index(v) {
-    if (!(v is int)) throw new ArgumentError("Expected argument $name to be of type int, was ${v.runtimeType} ($v)");
+    if (!(v is int))
+      throw new ArgumentError(
+          "Expected argument $name to be of type int, was ${v.runtimeType} ($v)");
     if (messages.containsKey("=$v")) {
       return "=$v";
     }
@@ -93,10 +91,9 @@ class PluralMessage extends SubMessage {
       plural_rules.PluralCase.FEW: "few",
       plural_rules.PluralCase.MANY: "many",
       plural_rules.PluralCase.OTHER: "other",
-    }[_pluralCase(v-offset)];
+    }[_pluralCase(v - offset)];
   }
 
   @override
   String get _type => "plural";
-
 }

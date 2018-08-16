@@ -23,7 +23,6 @@ int _n;
 int get _i => _n;
 int opt_precision; // Not currently used.
 
-
 // http://www.unicode.org/repos/cldr/trunk/common/supplemental/ordinals.xml
 
 // other
@@ -33,8 +32,9 @@ PluralCase _default_rule() => PluralCase.OTHER;
 
 PluralCase _sv_rule() {
   var units = _n % 10;
-  var tens = _n %100;
-  if ((units==1||units==2)&&tens!=11&&tens!=12) return PluralCase.ONE;
+  var tens = _n % 100;
+  if ((units == 1 || units == 2) && tens != 11 && tens != 12)
+    return PluralCase.ONE;
   return PluralCase.OTHER;
 }
 
@@ -63,32 +63,33 @@ PluralCase _ne_rule() {
 
 PluralCase _be_rule() {
   var units = _n % 10;
-  var tens = _n %100;
-  if ((units==2||units==3)&&tens!=12&&tens!=13) return PluralCase.FEW;
+  var tens = _n % 100;
+  if ((units == 2 || units == 3) && tens != 12 && tens != 13)
+    return PluralCase.FEW;
   return PluralCase.OTHER;
 }
 
 PluralCase _uk_rule() {
   var units = _n % 10;
-  var tens = _n %100;
-  if (units==3&&tens!=13) return PluralCase.FEW;
+  var tens = _n % 100;
+  if (units == 3 && tens != 13) return PluralCase.FEW;
   return PluralCase.OTHER;
 }
 
 PluralCase _tk_rule() {
   var units = _n % 10;
-  if (units==6||units==9||_n==10) return PluralCase.FEW;
+  if (units == 6 || units == 9 || _n == 10) return PluralCase.FEW;
   return PluralCase.OTHER;
 }
 
 // many,other
 
 PluralCase _kk_rule() {
-  switch (_n%10) {
+  switch (_n % 10) {
     case 6:
     case 9:
     case 10:
-      if (_n!=0) return PluralCase.MANY;
+      if (_n != 0) return PluralCase.MANY;
   }
   return PluralCase.OTHER;
 }
@@ -107,25 +108,25 @@ PluralCase _it_rule() {
 // one,many,other
 
 PluralCase _ka_rule() {
-  if (_i==1) return PluralCase.ONE;
-  if (_i==0) return PluralCase.MANY;
-  var v = _i%100;
-  if (v>=2&&v<=20) return PluralCase.MANY;
-  if (v==40||v==60||v==80) return PluralCase.MANY;
+  if (_i == 1) return PluralCase.ONE;
+  if (_i == 0) return PluralCase.MANY;
+  var v = _i % 100;
+  if (v >= 2 && v <= 20) return PluralCase.MANY;
+  if (v == 40 || v == 60 || v == 80) return PluralCase.MANY;
   return PluralCase.OTHER;
 }
 
 PluralCase _sq_rule() {
-  if (_n==1) return PluralCase.ONE;
-  if (_n%10==4&&_n%100!=14) return PluralCase.MANY;
+  if (_n == 1) return PluralCase.ONE;
+  if (_n % 10 == 4 && _n % 100 != 14) return PluralCase.MANY;
   return PluralCase.OTHER;
 }
 
 // one,two,few,other
 
 PluralCase _en_rule() {
-  if (_n>10&&_n<20) return PluralCase.OTHER;
-  switch (_n%10) {
+  if (_n > 10 && _n < 20) return PluralCase.OTHER;
+  switch (_n % 10) {
     case 1:
       return PluralCase.ONE;
     case 2:
@@ -165,8 +166,8 @@ PluralCase _ca_rule() {
 // one,two,many,other
 
 PluralCase _mk_rule() {
-  if (_i>10&&_i<20) return PluralCase.OTHER;
-  switch (_i%10) {
+  if (_i > 10 && _i < 20) return PluralCase.OTHER;
+  switch (_i % 10) {
     case 1:
       return PluralCase.ONE;
     case 2:
@@ -181,7 +182,7 @@ PluralCase _mk_rule() {
 // one,few,many,other
 
 PluralCase _az_rule() {
-  switch (_i%10) {
+  switch (_i % 10) {
     case 1:
     case 2:
     case 5:
@@ -194,7 +195,7 @@ PluralCase _az_rule() {
     case 6:
       return PluralCase.MANY;
     case 0:
-      switch (_i%100) {
+      switch (_i % 100) {
         case 20:
         case 50:
         case 70:
@@ -205,7 +206,7 @@ PluralCase _az_rule() {
         case 90:
           return PluralCase.MANY;
         case 0:
-          if (_i==0) return PluralCase.MANY;
+          if (_i == 0) return PluralCase.MANY;
           return PluralCase.FEW;
       }
   }
@@ -230,7 +231,7 @@ PluralCase _gu_rule() {
 }
 
 PluralCase _as_rule() {
-  if (_n==0||_n>10) return PluralCase.OTHER;
+  if (_n == 0 || _n > 10) return PluralCase.OTHER;
   switch (_n) {
     case 2:
     case 3:
@@ -244,7 +245,7 @@ PluralCase _as_rule() {
 }
 
 PluralCase _or_rule() {
-  if (_n==0||_n>=10) return PluralCase.OTHER;
+  if (_n == 0 || _n >= 10) return PluralCase.OTHER;
   switch (_n) {
     case 2:
     case 3:
@@ -280,11 +281,6 @@ PluralCase _cy_rule() {
   return PluralCase.OTHER;
 }
 
-
-
-
-
-
 final Map pluralRules = {
   'default': _default_rule,
   'sv': _sv_rule,
@@ -300,30 +296,23 @@ final Map pluralRules = {
   'vi': _fil_rule,
   'hu': _hu_rule,
   'ne': _ne_rule,
-
   'be': _be_rule,
   'uk': _uk_rule,
   'tk': _tk_rule,
-
   'kk': _kk_rule,
   'it': _it_rule,
-
   'ka': _ka_rule,
   'sq': _sq_rule,
-
   'en': _en_rule,
   'mr': _mr_rule,
   'ca': _ca_rule,
-
   'mk': _mk_rule,
-
   'az': _az_rule,
   'gu': _gu_rule,
   'hi': _gu_rule,
   'as': _as_rule,
   'bn': _as_rule,
   'or': _or_rule,
-
   'cy': _cy_rule,
 };
 
