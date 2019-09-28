@@ -608,4 +608,23 @@ main() async {
           "Rik");
     });
   });
+
+  group('resolve locales', () {
+
+    test('fallback to main locale when sub locale not present', () {
+      var msg = new IntlMessage({"en": "Hello world"});
+      Intl.withLocale("en_US", () {
+        expect(msg.format({}), 'Hello world');
+      });
+      Intl.withLocale("en-UK", () {
+        expect(msg.format({}), 'Hello world');
+      });
+    });
+    test('fallback to default when locale not present', () {
+      var msg = new IntlMessage({"default": "Hello world", "nl": "Hallo"});
+      Intl.withLocale("en-US", () {
+        expect(msg.format({}), 'Hello world');
+      });
+    });
+  });
 }
