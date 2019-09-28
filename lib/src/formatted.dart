@@ -62,6 +62,9 @@ class VariableSubstitution implements IntlMessage {
 
   @override
   String toString() => "{$name}";
+
+  @override
+  toJson() => toString();
 }
 
 class NumberMessage extends VariableSubstitution {

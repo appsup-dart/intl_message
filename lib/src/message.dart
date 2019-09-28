@@ -34,6 +34,8 @@ abstract class IntlMessage {
     });
   }
 
+  dynamic toJson();
+
   static String get currentLocale => Intl.getCurrentLocale();
 
   static String get currentCurrency => Zone.current[#IntlMessage.currency];
@@ -52,6 +54,9 @@ class LiteralString implements IntlMessage {
 
   @override
   String toString() => string;
+
+  @override
+  toJson() => toString();
 }
 
 class ComposedMessage implements IntlMessage {
@@ -65,4 +70,7 @@ class ComposedMessage implements IntlMessage {
 
   @override
   String toString() => messages.join();
+
+  @override
+  toJson() => toString();
 }

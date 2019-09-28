@@ -21,6 +21,9 @@ abstract class SubMessage implements IntlMessage {
   @override
   String toString() =>
       "{$name, $_type, ${messages.keys.map((k) => "$k {${messages[k]}}").join(" ")}";
+
+  @override
+  toJson() => toString();
 }
 
 class SelectMessage extends SubMessage {

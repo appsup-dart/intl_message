@@ -12,4 +12,7 @@ class MultiLanguageMessage implements IntlMessage {
         onFailure: (locale) => 'default');
     return languageMap[verifiedLocale].format(args);
   }
+
+  @override
+  toJson() => languageMap;
 }
