@@ -22,7 +22,7 @@ class _BaseVariable extends Variable {
     if (failOnNotFound && !args.containsKey(name))
       throw new ArgumentError("The context variable '$name'");
 
-    return args[name];
+    return args == null ? null : args[name];
   }
 
   @override
@@ -37,11 +37,11 @@ class _SubIndex extends Variable {
 
   @override
   get(Map<String, dynamic> args, {bool failOnNotFound: true}) {
-    var v = variable.get(args);
+    var v = variable.get(args, failOnNotFound: failOnNotFound);
     if (failOnNotFound && !v.containsKey(index))
       throw new ArgumentError("The context variable '$index'");
 
-    return v[index];
+    return v == null ? null : v[index];
   }
 
   @override
@@ -57,7 +57,7 @@ class VariableSubstitution implements IntlMessage {
 
   @override
   String format(Map<String, dynamic> args) {
-    return formatter(name.get(args));
+    return formatter(name.get(args, failOnNotFound: false));
   }
 
   @override
