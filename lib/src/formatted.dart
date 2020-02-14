@@ -7,7 +7,7 @@ abstract class Variable {
 
   factory Variable(String name) => _BaseVariable(name);
 
-  dynamic get(Map<String, dynamic> args, {bool failOnNotFound = true});
+  dynamic get(Map<String, dynamic> args);
 
   Variable subIndex(String v) => _SubIndex(this, v);
 }
@@ -18,8 +18,8 @@ class _BaseVariable extends Variable {
   _BaseVariable(this.name) : super._();
 
   @override
-  dynamic get(Map<String, dynamic> args, {bool failOnNotFound = true}) {
-    if (failOnNotFound && !args.containsKey(name)) {
+  dynamic get(Map<String, dynamic> args) {
+    if (!args.containsKey(name)) {
       throw ArgumentError("The context variable '$name'");
     }
 
@@ -37,9 +37,9 @@ class _SubIndex extends Variable {
   _SubIndex(this.variable, this.index) : super._();
 
   @override
-  dynamic get(Map<String, dynamic> args, {bool failOnNotFound = true}) {
-    var v = variable.get(args, failOnNotFound: failOnNotFound);
-    if (failOnNotFound && !v.containsKey(index)) {
+  dynamic get(Map<String, dynamic> args) {
+    var v = variable.get(args);
+    if (!v.containsKey(index)) {
       throw ArgumentError("The context variable '$index'");
     }
 
@@ -52,14 +52,31 @@ class _SubIndex extends Variable {
 
 class VariableSubstitution implements IntlMessage {
   final Variable name;
+  final bool fallbackToNullWhenEvaluationFails;
 
-  VariableSubstitution(this.name);
+  VariableSubstitution(this.name,
+      {this.fallbackToNullWhenEvaluationFails = false});
 
-  String formatter(covariant v) => _toString(v);
+  String formatter(covariant v, Map<String, dynamic> args) => _toString(v);
+
+  dynamic _evaluate(Map<String, dynamic> args) {
+    try {
+      return name.get(args);
+    } catch (e) {
+      if (fallbackToNullWhenEvaluationFails) return null;
+      rethrow;
+    }
+  }
 
   @override
-  String format(Map<String, dynamic> args) {
-    return formatter(name.get(args, failOnNotFound: false));
+  String format(Map<String, dynamic> args, {ErrorHandler onError}) {
+    try {
+      var v = _evaluate(args);
+      return formatter(v, args);
+    } catch (e) {
+      if (onError == null) rethrow;
+      return onError(this, e);
+    }
   }
 
   @override
@@ -92,7 +109,8 @@ class NumberMessage extends VariableSubstitution {
   num _toNum(v) => v is num ? v : v is String ? num.parse(v) : v;
 
   @override
-  String formatter(v) => _numberFormat.format(_toNum(v));
+  String formatter(v, Map<String, dynamic> args) =>
+      _numberFormat.format(_toNum(v));
 
   @override
   String toString() => '{$name, number, $numberFormat}';
@@ -135,7 +153,7 @@ class DateTimeMessage extends VariableSubstitution {
       ?.toLocal();
 
   @override
-  String formatter(v) =>
+  String formatter(v, Map<String, dynamic> args) =>
       DateFormat(formats[type][dateTimeFormat] ?? dateTimeFormat)
           .format(_toDateTime(v));
 
@@ -144,20 +162,15 @@ class DateTimeMessage extends VariableSubstitution {
 }
 
 class CustomFormatMessage extends VariableSubstitution {
-  final Variable formatName;
+  final String formatName;
   final List<String> arguments;
 
   CustomFormatMessage(Variable name, this.formatName, this.arguments)
-      : super(name);
+      : super(name, fallbackToNullWhenEvaluationFails: true);
 
   @override
-  String formatter(covariant v) => _toString(Function.apply(
-      formatName.get(IntlMessage.formatters), [v, ...arguments]));
-
-  @override
-  String format(Map<String, dynamic> args) {
-    return formatter(name.get(args, failOnNotFound: false));
-  }
+  String formatter(covariant v, Map<String, dynamic> args) => _toString(
+      Function.apply(IntlMessage.formatters[formatName], [v, ...arguments]));
 
   @override
   String toString() =>

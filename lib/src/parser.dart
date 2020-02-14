@@ -144,7 +144,7 @@ class IcuParser {
       generalSelect.map((values) => SelectMessage(values.first, values[3]));
 
   Parser<CustomFormatMessage> get custom => (preface &
-          id &
+          simpleId &
           (comma & icuText.plus().flatten().trim()).pick(1).star() &
           closeCurly)
       .map((values) => CustomFormatMessage(values.first, values[1],

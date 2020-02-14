@@ -1,7 +1,9 @@
 part of intl_message;
 
+typedef ErrorHandler = String Function(IntlMessage, Exception);
+
 abstract class IntlMessage {
-  String format(Map<String, dynamic> args);
+  String format(Map<String, dynamic> args, {ErrorHandler onError});
 
   factory IntlMessage(stringOrMap) {
     if (stringOrMap is String) {
@@ -50,7 +52,7 @@ class LiteralString implements IntlMessage {
   LiteralString(this.string);
 
   @override
-  String format(Map<String, dynamic> args) => string;
+  String format(Map<String, dynamic> args, {ErrorHandler onError}) => string;
 
   @override
   String toString() => string;
@@ -65,8 +67,8 @@ class ComposedMessage implements IntlMessage {
   ComposedMessage(this.messages);
 
   @override
-  String format(Map<String, dynamic> args) =>
-      messages.map((v) => v.format(args)).join();
+  String format(Map<String, dynamic> args, {ErrorHandler onError}) =>
+      messages.map((v) => v.format(args, onError: onError)).join();
 
   @override
   String toString() => messages.join();

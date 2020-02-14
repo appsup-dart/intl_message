@@ -1,18 +1,17 @@
 part of intl_message;
 
-abstract class SubMessage implements IntlMessage {
-  final Variable name;
+abstract class SubMessage extends VariableSubstitution {
   final Map<String, IntlMessage> messages;
 
-  SubMessage(this.name, this.messages);
+  SubMessage(Variable name, this.messages)
+      : super(name, fallbackToNullWhenEvaluationFails: true);
 
   String _index(dynamic v);
 
   String get _type;
 
   @override
-  String format(Map<String, dynamic> args) {
-    var v = name.get(args, failOnNotFound: false);
+  String formatter(v, Map<String, dynamic> args) {
     var index = _index(v);
     var m = messages[index] ?? messages['other'];
     return m.format(args);
@@ -64,7 +63,7 @@ class PluralMessage extends SubMessage {
       : super(name, messages);
 
   @override
-  String format(Map<String, dynamic> args) {
+  String format(Map<String, dynamic> args, {ErrorHandler onError}) {
     var s = super.format(args);
     return s.replaceAllMapped(RegExp(r'(^|[^\\])#'),
         (m) => m.group(1) + NumberFormat().format(name.get(args) - offset));

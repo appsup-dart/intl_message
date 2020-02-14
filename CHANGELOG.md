@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- added `onError` argument to format
+
 ## 0.1.3
 
 - Add toJson method to IntlMessage
