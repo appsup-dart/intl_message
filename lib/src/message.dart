@@ -5,16 +5,17 @@ abstract class IntlMessage {
 
   factory IntlMessage(stringOrMap) {
     if (stringOrMap is String) {
-      var r = new IcuParser().message.end().parse(stringOrMap);
+      var r = IcuParser().message.end().parse(stringOrMap);
       if (r.isSuccess) return r.value;
-      throw new ArgumentError(
+      throw ArgumentError(
           "Unable to parse IntlMessage (${r.message}) '$stringOrMap'");
     }
-    if (stringOrMap is Map)
-      return new MultiLanguageMessage(new Map.fromIterables(
-          stringOrMap.keys, stringOrMap.values.map((v) => new IntlMessage(v))));
+    if (stringOrMap is Map) {
+      return MultiLanguageMessage(Map.fromIterables(
+          stringOrMap.keys, stringOrMap.values.map((v) => IntlMessage(v))));
+    }
 
-    throw new ArgumentError("Expected String or Map");
+    throw ArgumentError('Expected String or Map');
   }
 
   static T withLocale<T>(String locale, T Function() function) {
@@ -29,8 +30,7 @@ abstract class IntlMessage {
       Map<String, Function> formatters, T Function() function) {
     return runZoned(function, zoneValues: {
       #IntlMessage.formatters:
-          new Map<String, Function>.from(IntlMessage.formatters)
-            ..addAll(formatters)
+          Map<String, Function>.from(IntlMessage.formatters)..addAll(formatters)
     });
   }
 
@@ -56,7 +56,7 @@ class LiteralString implements IntlMessage {
   String toString() => string;
 
   @override
-  toJson() => toString();
+  String toJson() => toString();
 }
 
 class ComposedMessage implements IntlMessage {
@@ -72,5 +72,5 @@ class ComposedMessage implements IntlMessage {
   String toString() => messages.join();
 
   @override
-  toJson() => toString();
+  String toJson() => toString();
 }

@@ -5,7 +5,7 @@ import 'package:intl/src/plural_rules.dart';
 
 /// This must be called before evaluating a new rule, because we're using
 /// library-global state to both keep the rules terse and minimize space.
-startRuleEvaluation(int howMany) {
+void startRuleEvaluation(int howMany) {
   _n = howMany;
 }
 
@@ -33,8 +33,9 @@ PluralCase _default_rule() => PluralCase.OTHER;
 PluralCase _sv_rule() {
   var units = _n % 10;
   var tens = _n % 100;
-  if ((units == 1 || units == 2) && tens != 11 && tens != 12)
+  if ((units == 1 || units == 2) && tens != 11 && tens != 12) {
     return PluralCase.ONE;
+  }
   return PluralCase.OTHER;
 }
 
@@ -64,8 +65,9 @@ PluralCase _ne_rule() {
 PluralCase _be_rule() {
   var units = _n % 10;
   var tens = _n % 100;
-  if ((units == 2 || units == 3) && tens != 12 && tens != 13)
+  if ((units == 2 || units == 3) && tens != 12 && tens != 13) {
     return PluralCase.FEW;
+  }
   return PluralCase.OTHER;
 }
 

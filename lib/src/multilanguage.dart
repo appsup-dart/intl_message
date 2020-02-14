@@ -14,5 +14,5 @@ class MultiLanguageMessage implements IntlMessage {
   }
 
   @override
-  toJson() => languageMap;
+  Map<String, dynamic> toJson() => languageMap;
 }
