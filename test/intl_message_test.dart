@@ -569,4 +569,99 @@ void main() async {
       });
     });
   });
+
+  group('Async formatting', () {
+    test('Future arguments', () async {
+      expect(
+          await IntlMessage('Hello {who}').format({'who': Future.value('you')}),
+          'Hello you');
+      expect(
+          await IntlMessage('{value, number, integer}')
+              .format({'value': Future.value(5.5)}),
+          '6');
+
+      var time = DateTime(2017, 11, 3, 14, 30);
+      var args = {'start': Future.value(time)};
+      await Intl.withLocale('en', () async {
+        expect(
+            await IntlMessage('Sale begins {start, date, short}').format(args),
+            'Sale begins 11/3/2017');
+        expect(
+            await IntlMessage('Sale begins {start, date, medium}').format(args),
+            'Sale begins Nov 3, 2017');
+        expect(
+            await IntlMessage('Sale begins {start, date, long}').format(args),
+            'Sale begins November 3, 2017');
+        expect(
+            await IntlMessage('Sale begins {start, date, full}').format(args),
+            'Sale begins Friday, November 3, 2017');
+      });
+
+      args = {'expires': Future.value(time)};
+      expect(
+          await IntlMessage('Coupon expires at {expires, time, medium}')
+              .format(args),
+          'Coupon expires at 2:30:00 PM');
+
+      await Intl.withLocale('nl', () async {
+        expect(
+            await IntlMessage('Your total is {total, number, currency}')
+                .format({'total': Future.value(99)}),
+            r'Your total is € 99,00');
+        expect(
+            await IntlMessage('Your total is {total, number, ¤#,##0.00}')
+                .format({'total': Future.value(99)}),
+            r'Your total is EUR99,00');
+      });
+
+      var m = IntlMessage(
+          '{gender, select, male {He} female {She} other {They}} will respond shortly.');
+      expect(await m.format({'gender': Future.value('x')}),
+          'They will respond shortly.');
+
+      m = IntlMessage('{taxableArea, select, '
+          'yes {An additional {taxRate, number, percent} tax will be collected.}'
+          'other {No taxes apply.}}');
+      expect(
+          await m.format({
+            'taxableArea': Future.value('no'),
+            'taxRate': Future.value(0.3)
+          }),
+          'No taxes apply.');
+
+      m = IntlMessage(
+          'You have {itemCount, plural, =0 {no items} one {# item} other {# items}}.');
+      expect(
+          await m.format({'itemCount': Future.value(0)}), 'You have no items.');
+
+      m = IntlMessage(
+          "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!");
+      expect(await m.format({'year': Future.value(4)}),
+          "It's my cat's 4th birthday!");
+    });
+
+    test('async custom formatters', () {
+      IntlMessage.withFormatters({
+        'upcase': (String v) async => v.toUpperCase(),
+        'locale': (_) async => Intl.getCurrentLocale(),
+        'prop': (v, p) async => v[p]
+      }, () async {
+        expect(
+            await IntlMessage('This is {VAR, upcase}.').format({'VAR': 'big'}),
+            'This is BIG.');
+
+        await Intl.withLocale('nl_BE', () async {
+          expect(
+              await IntlMessage('The current locale is {_, locale}.')
+                  .format({}),
+              'The current locale is nl_BE.');
+        });
+        expect(
+            await IntlMessage('Answer: {obj, prop, a}').format({
+              'obj': {'q': 3, 'a': 42}
+            }),
+            'Answer: 42');
+      });
+    });
+  });
 }

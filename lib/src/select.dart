@@ -11,7 +11,7 @@ abstract class SubMessage extends VariableSubstitution {
   String get _type;
 
   @override
-  String formatter(v, Map<String, dynamic> args) {
+  FutureOr<String> formatter(v, Map<String, dynamic> args) {
     var index = _index(v);
     var m = messages[index] ?? messages['other'];
     return m.format(args);
@@ -63,10 +63,23 @@ class PluralMessage extends SubMessage {
       : super(name, messages);
 
   @override
-  String format(Map<String, dynamic> args, {ErrorHandler onError}) {
+  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler onError}) {
     var s = super.format(args);
-    return s.replaceAllMapped(RegExp(r'(^|[^\\])#'),
-        (m) => m.group(1) + NumberFormat().format(name.get(args) - offset));
+    return _replace(s, args);
+  }
+
+  @override
+  FutureOr<String> formatter(covariant v, Map<String, dynamic> args) {
+    var s = super.formatter(v, args);
+    return _replace(s, v);
+  }
+
+  FutureOr<String> _replace(FutureOr<String> s, v) {
+    if (s is String) {
+      return s.replaceAllMapped(RegExp(r'(^|[^\\])#'),
+          (m) => m.group(1) + NumberFormat().format(v - offset));
+    }
+    return (s as Future<String>).then((s) => _replace(s, v));
   }
 
   plural_rules.PluralCase _pluralCase(int howMany) {

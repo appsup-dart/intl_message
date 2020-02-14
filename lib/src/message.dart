@@ -3,7 +3,7 @@ part of intl_message;
 typedef ErrorHandler = String Function(IntlMessage, Exception);
 
 abstract class IntlMessage {
-  String format(Map<String, dynamic> args, {ErrorHandler onError});
+  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler onError});
 
   factory IntlMessage(stringOrMap) {
     if (stringOrMap is String) {
@@ -67,8 +67,13 @@ class ComposedMessage implements IntlMessage {
   ComposedMessage(this.messages);
 
   @override
-  String format(Map<String, dynamic> args, {ErrorHandler onError}) =>
-      messages.map((v) => v.format(args, onError: onError)).join();
+  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler onError}) {
+    var parts = messages.map((v) => v.format(args, onError: onError));
+    if (parts.every((element) => element is String)) {
+      return parts.join();
+    }
+    return Future.wait(parts.map((v) => Future.value(v))).then((l) => l.join());
+  }
 
   @override
   String toString() => messages.join();

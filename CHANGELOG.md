@@ -3,6 +3,8 @@
 ## 0.2.0
 
 - added `onError` argument to format
+- accept async custom formatters
+- accept future arguments
 
 ## 0.1.3
 

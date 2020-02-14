@@ -1,6 +1,9 @@
 part of intl_message;
 
-String _toString(dynamic v) => v == null || v == false ? '' : '$v';
+FutureOr<String> _toString(dynamic v) {
+  if (v is Future) return v.then(_toString);
+  return v == null || v == false ? '' : '$v';
+}
 
 abstract class Variable {
   Variable._();
@@ -57,7 +60,8 @@ class VariableSubstitution implements IntlMessage {
   VariableSubstitution(this.name,
       {this.fallbackToNullWhenEvaluationFails = false});
 
-  String formatter(covariant v, Map<String, dynamic> args) => _toString(v);
+  FutureOr<String> formatter(covariant v, Map<String, dynamic> args) =>
+      _toString(v);
 
   dynamic _evaluate(Map<String, dynamic> args) {
     try {
@@ -68,11 +72,22 @@ class VariableSubstitution implements IntlMessage {
     }
   }
 
+  FutureOr<String> _format(dynamic v, Map<String, dynamic> args,
+      {ErrorHandler onError}) {
+    try {
+      return formatter(v, args);
+    } catch (e) {
+      if (onError == null) rethrow;
+      return onError(this, e);
+    }
+  }
+
   @override
-  String format(Map<String, dynamic> args, {ErrorHandler onError}) {
+  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler onError}) {
     try {
       var v = _evaluate(args);
-      return formatter(v, args);
+      if (v is Future) return v.then((v) => _format(v, args, onError: onError));
+      return _format(v, args, onError: onError);
     } catch (e) {
       if (onError == null) rethrow;
       return onError(this, e);
@@ -169,8 +184,9 @@ class CustomFormatMessage extends VariableSubstitution {
       : super(name, fallbackToNullWhenEvaluationFails: true);
 
   @override
-  String formatter(covariant v, Map<String, dynamic> args) => _toString(
-      Function.apply(IntlMessage.formatters[formatName], [v, ...arguments]));
+  FutureOr<String> formatter(covariant v, Map<String, dynamic> args) =>
+      _toString(Function.apply(
+          IntlMessage.formatters[formatName], [v, ...arguments]));
 
   @override
   String toString() =>
