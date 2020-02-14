@@ -4,11 +4,12 @@ import 'package:intl_message/intl_message.dart';
 import 'package:petitparser/petitparser.dart';
 
 class IcuParser {
-  Parser get openCurly => char('{');
+  Parser<String> get openCurly => char('{');
 
-  Parser get closeCurly => char('}');
+  Parser<String> get closeCurly => char('}');
 
-  Parser get quotedCurly => (string("'{'") | string("'}'")).map((x) => x[1]);
+  Parser<String> get quotedCurly =>
+      (string("'{'") | string("'}'")).map((x) => x[1]);
 
   Parser get icuEscapedText => quotedCurly | twoSingleQuotes;
 
@@ -16,84 +17,85 @@ class IcuParser {
 
   Parser get notAllowedInIcuText => curly | styleStart;
 
-  Parser get icuText => notAllowedInIcuText.neg();
+  Parser<String> get icuText => notAllowedInIcuText.neg();
 
-  Parser get styleStart =>
+  Parser<List> get styleStart =>
       string('<style') &
       (whitespace() & char('>').neg().star()).optional() &
       char('>');
 
-  Parser get styleEnd => string('</style>');
+  Parser<String> get styleEnd => string('</style>');
 
-  Parser get styleContent => styleEnd.neg().star();
+  Parser<List<String>> get styleContent => styleEnd.neg().star();
 
-  Parser get style => (styleStart & styleContent & styleEnd).flatten();
+  Parser<String> get style => (styleStart & styleContent & styleEnd).flatten();
 
-  Parser get notAllowedInNormalText => openCurly;
+  Parser<String> get notAllowedInNormalText => openCurly;
 
-  Parser get normalText => notAllowedInNormalText.neg();
+  Parser<String> get normalText => notAllowedInNormalText.neg();
 
-  Parser get messageText => (icuEscapedText | icuText | style)
+  Parser<LiteralString> get messageText => (icuEscapedText | icuText | style)
       .plus()
       .flatten()
       .map((v) => LiteralString(v));
 
-  Parser get nonIcuMessageText =>
+  Parser<LiteralString> get nonIcuMessageText =>
       normalText.plus().flatten().map((v) => LiteralString(v));
 
-  Parser get twoSingleQuotes => string("''").map((x) => "'");
+  Parser<String> get twoSingleQuotes => string("''").map((x) => "'");
 
-  Parser get number => digit().plus().flatten().trim().map(int.parse);
+  Parser<int> get number => digit().plus().flatten().trim().map(int.parse);
 
-  Parser get simpleId =>
+  Parser<String> get simpleId =>
       ((letter() | char('_')) & (word() | char('_')).star()).flatten();
 
-  Parser get id => simpleId
+  Parser<Variable> get id => simpleId
       .map((v) => Variable(v))
       .seq(char('.').seq(simpleId).pick(1).star())
-      .map((v) => (v[1] as List).fold(v[0], (a, b) => a.subIndex(b)))
+      .map<Variable>((v) => (v[1] as List).fold(v[0], (a, b) => a.subIndex(b)))
       .trim();
 
-  Parser get comma => char(',').trim();
+  Parser<String> get comma => char(',').trim();
 
   /// Given a list of possible keywords, return a rule that accepts any of them.
   /// e.g., given ['male', 'female', 'other'], accept any of them.
-  Parser asKeywords(list) =>
-      list.map(string).reduce((a, b) => a | b).flatten().trim();
+  Parser<String> asKeywords(List<String> list) =>
+      list.map(string).reduce((a, b) => (a | b).flatten()).trim();
 
-  Parser get pluralKeyword =>
-      asKeywords(['zero', 'one', 'two', 'few', 'many', 'other']) |
-      (char('=') & digit().plus()).flatten().trim();
+  Parser<String> get pluralKeyword =>
+      ((asKeywords(['zero', 'one', 'two', 'few', 'many', 'other']) |
+              (char('=') & digit().plus()).flatten().trim()))
+          .cast();
 
-  Parser get genderKeyword => asKeywords(['female', 'male', 'other']);
+  Parser<String> get genderKeyword => asKeywords(['female', 'male', 'other']);
 
-  SettableParser interiorText = undefined();
+  SettableParser<IntlMessage> interiorText = undefined();
 
-  Parser get preface => (openCurly & id & comma).pick(1);
+  Parser<Variable> get preface => (openCurly & id & comma).pick(1);
 
-  Parser get numberLiteral => string('number');
+  Parser<String> get numberLiteral => string('number');
 
-  Parser get intlNumber => (preface &
+  Parser<NumberMessage> get intlNumber => (preface &
           numberLiteral &
           (comma & icuText.plus().flatten().trim()).pick(1).optional() &
           closeCurly)
       .map((values) => NumberMessage(values[0], values[2]));
 
-  Parser get dateLiteral => string('date');
+  Parser<String> get dateLiteral => string('date');
 
-  Parser get dateFormat => icuText.plus().flatten().trim();
+  Parser<String> get dateFormat => icuText.plus().flatten().trim();
 
-  Parser get intlDate => (preface &
+  Parser<DateTimeMessage> get intlDate => (preface &
           dateLiteral &
           (comma & dateFormat).pick(1).optional() &
           closeCurly)
       .map((values) => DateTimeMessage.date(values[0], values[2]));
 
-  Parser get timeLiteral => string('time');
+  Parser<String> get timeLiteral => string('time');
 
-  Parser get timeFormat => icuText.plus().flatten().trim();
+  Parser<String> get timeFormat => icuText.plus().flatten().trim();
 
-  Parser get intlTime => (preface &
+  Parser<DateTimeMessage> get intlTime => (preface &
           timeLiteral &
           (comma & timeFormat).pick(1).optional() &
           closeCurly)
@@ -101,16 +103,15 @@ class IcuParser {
 
   Parser get pluralLiteral => string('plural') | string('selectordinal');
 
-  Parser get pluralClause =>
+  Parser<List> get pluralClause =>
       (pluralKeyword & openCurly & interiorText & closeCurly)
           .trim()
           .permute([0, 2]);
 
-  Parser get pluralClauses => pluralClause
-      .plus()
-      .map((l) => <String, IntlMessage>{for (var v in l) v.first: v.last});
+  Parser<Map<String, IntlMessage>> get pluralClauses =>
+      pluralClause.plus().map((l) => {for (var v in l) v.first: v.last});
 
-  Parser get offset =>
+  Parser<int> get offset =>
       (string('offset:') & digit().plus().flatten().map(int.parse)).pick(1);
 
   Parser get plural =>
@@ -121,35 +122,35 @@ class IcuParser {
       pluralClauses &
       closeCurly;
 
-  Parser get intlPlural => plural.map((values) => values[1] == 'plural'
+  Parser<IntlMessage> get intlPlural => plural.map((values) => values[1] ==
+          'plural'
       ? PluralMessage(values.first, values[4], offset: values[3] ?? 0)
       : SelectOrdinalMessage(values.first, values[4], offset: values[3] ?? 0));
 
-  Parser get selectLiteral => string('select');
+  Parser<String> get selectLiteral => string('select');
 
-  Parser get selectClause =>
+  Parser<List> get selectClause =>
       (simpleId.trim() & openCurly & interiorText & closeCurly)
           .trim()
           .permute([0, 2]);
 
-  Parser get selectClauses => selectClause
-      .plus()
-      .map((l) => <String, IntlMessage>{for (var v in l) v.first: v.last});
+  Parser<Map<String, IntlMessage>> get selectClauses =>
+      selectClause.plus().map((l) => {for (var v in l) v.first: v.last});
 
   Parser get generalSelect =>
       preface & selectLiteral & comma & selectClauses & closeCurly;
 
-  Parser get intlSelect =>
+  Parser<SelectMessage> get intlSelect =>
       generalSelect.map((values) => SelectMessage(values.first, values[3]));
 
-  Parser get custom => (preface &
+  Parser<CustomFormatMessage> get custom => (preface &
           id &
           (comma & icuText.plus().flatten().trim()).pick(1).star() &
           closeCurly)
       .map((values) => CustomFormatMessage(values.first, values[1],
           values[2].map<String>((v) => v as String).toList()));
 
-  Parser get parameter => (openCurly & id & closeCurly)
+  Parser<VariableSubstitution> get parameter => (openCurly & id & closeCurly)
       .pick(1)
       .map((param) => VariableSubstitution(param));
 
@@ -162,12 +163,13 @@ class IcuParser {
       custom |
       parameter;
 
-  Parser get simpleText => (messageText | variable).plus().map((l) =>
-      ComposedMessage(l.map<IntlMessage>((v) => v as IntlMessage).toList()));
+  Parser<ComposedMessage> get simpleText =>
+      (messageText | variable).plus().map((l) => ComposedMessage(
+          l.map<IntlMessage>((v) => v as IntlMessage).toList()));
 
-  Parser get empty => epsilon().map((_) => LiteralString(''));
+  Parser<LiteralString> get empty => epsilon().map((_) => LiteralString(''));
 
-  Parser get message => (simpleText | empty);
+  Parser<IntlMessage> get message => (simpleText | empty).cast();
 
   IcuParser() {
     // There is a cycle here, so we need the explicit set to avoid
