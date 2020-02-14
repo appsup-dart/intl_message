@@ -5,6 +5,7 @@
 - added `onError` argument to format
 - accept async custom formatters
 - accept future arguments
+- allow expressions in messages
 
 ## 0.1.3
 

@@ -5,59 +5,34 @@ FutureOr<String> _toString(dynamic v) {
   return v == null || v == false ? '' : '$v';
 }
 
-abstract class Variable {
-  Variable._();
+final _evaluator = _MyEvaluator();
 
-  factory Variable(String name) => _BaseVariable(name);
-
-  dynamic get(Map<String, dynamic> args);
-
-  Variable subIndex(String v) => _SubIndex(this, v);
-}
-
-class _BaseVariable extends Variable {
-  final String name;
-
-  _BaseVariable(this.name) : super._();
-
+class _MyEvaluator extends ExpressionEvaluator {
   @override
-  dynamic get(Map<String, dynamic> args) {
-    if (!args.containsKey(name)) {
-      throw ArgumentError("The context variable '$name'");
+  dynamic evalMemberExpression(
+      MemberExpression expression, Map<String, dynamic> context) {
+    var v = eval(expression.object, context);
+    if (v is Map && v.containsKey(expression.property.name)) {
+      return v[expression.property.name];
     }
-
-    return args == null ? null : args[name];
+    throw ArgumentError();
   }
 
   @override
-  String toString() => name;
-}
-
-class _SubIndex extends Variable {
-  final Variable variable;
-  final String index;
-
-  _SubIndex(this.variable, this.index) : super._();
-
-  @override
-  dynamic get(Map<String, dynamic> args) {
-    var v = variable.get(args);
-    if (!v.containsKey(index)) {
-      throw ArgumentError("The context variable '$index'");
+  dynamic evalVariable(Variable variable, Map<String, dynamic> context) {
+    if (!context.containsKey(variable.identifier.name)) {
+      print(variable.identifier.name);
+      throw ArgumentError();
     }
-
-    return v == null ? null : v[index];
+    return super.evalVariable(variable, context);
   }
-
-  @override
-  String toString() => '$variable.$index';
 }
 
-class VariableSubstitution implements IntlMessage {
-  final Variable name;
+class ExpressionSubstitution implements IntlMessage {
+  final Expression name;
   final bool fallbackToNullWhenEvaluationFails;
 
-  VariableSubstitution(this.name,
+  ExpressionSubstitution(this.name,
       {this.fallbackToNullWhenEvaluationFails = false});
 
   FutureOr<String> formatter(covariant v, Map<String, dynamic> args) =>
@@ -65,7 +40,7 @@ class VariableSubstitution implements IntlMessage {
 
   dynamic _evaluate(Map<String, dynamic> args) {
     try {
-      return name.get(args);
+      return _evaluator.eval(name, args);
     } catch (e) {
       if (fallbackToNullWhenEvaluationFails) return null;
       rethrow;
@@ -101,7 +76,7 @@ class VariableSubstitution implements IntlMessage {
   String toJson() => toString();
 }
 
-class NumberMessage extends VariableSubstitution {
+class NumberMessage extends ExpressionSubstitution {
   final String numberFormat;
 
   NumberMessage(Variable name, this.numberFormat) : super(name);
@@ -131,7 +106,7 @@ class NumberMessage extends VariableSubstitution {
   String toString() => '{$name, number, $numberFormat}';
 }
 
-class DateTimeMessage extends VariableSubstitution {
+class DateTimeMessage extends ExpressionSubstitution {
   static const formats = {
     'date': {
       'short': 'yMd',
@@ -176,11 +151,11 @@ class DateTimeMessage extends VariableSubstitution {
   String toString() => '{$name, type, $dateTimeFormat}';
 }
 
-class CustomFormatMessage extends VariableSubstitution {
+class CustomFormatMessage extends ExpressionSubstitution {
   final String formatName;
   final List<String> arguments;
 
-  CustomFormatMessage(Variable name, this.formatName, this.arguments)
+  CustomFormatMessage(Expression name, this.formatName, this.arguments)
       : super(name, fallbackToNullWhenEvaluationFails: true);
 
   @override

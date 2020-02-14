@@ -10,6 +10,7 @@ environment:
 dependencies:
   intl: '>=0.15.2 <0.17.0'
   petitparser: ">=1.7.6 <3.0.0"
+  expressions: ^0.1.4
 
 dev_dependencies:
   test: ">=0.12.0 <2.0.0"

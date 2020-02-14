@@ -1,9 +1,9 @@
 part of intl_message;
 
-abstract class SubMessage extends VariableSubstitution {
+abstract class SubMessage extends ExpressionSubstitution {
   final Map<String, IntlMessage> messages;
 
-  SubMessage(Variable name, this.messages)
+  SubMessage(Expression name, this.messages)
       : super(name, fallbackToNullWhenEvaluationFails: true);
 
   String _index(dynamic v);
@@ -26,7 +26,7 @@ abstract class SubMessage extends VariableSubstitution {
 }
 
 class SelectMessage extends SubMessage {
-  SelectMessage(Variable name, Map<String, IntlMessage> messages)
+  SelectMessage(Expression name, Map<String, IntlMessage> messages)
       : super(name, messages);
 
   @override
@@ -37,7 +37,7 @@ class SelectMessage extends SubMessage {
 }
 
 class SelectOrdinalMessage extends PluralMessage {
-  SelectOrdinalMessage(Variable name, Map<String, IntlMessage> messages,
+  SelectOrdinalMessage(Expression name, Map<String, IntlMessage> messages,
       {int offset = 0})
       : super(name, messages, offset: offset);
 
@@ -58,7 +58,7 @@ class SelectOrdinalMessage extends PluralMessage {
 class PluralMessage extends SubMessage {
   final int offset;
 
-  PluralMessage(Variable name, Map<String, IntlMessage> messages,
+  PluralMessage(Expression name, Map<String, IntlMessage> messages,
       {this.offset = 0})
       : super(name, messages);
 

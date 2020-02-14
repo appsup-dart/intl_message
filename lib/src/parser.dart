@@ -2,6 +2,8 @@ library intl_message.parser;
 
 import 'package:intl_message/intl_message.dart';
 import 'package:petitparser/petitparser.dart';
+import 'package:expressions/src/parser.dart';
+import 'package:expressions/expressions.dart';
 
 class IcuParser {
   Parser<String> get openCurly => char('{');
@@ -49,11 +51,7 @@ class IcuParser {
   Parser<String> get simpleId =>
       ((letter() | char('_')) & (word() | char('_')).star()).flatten();
 
-  Parser<Variable> get id => simpleId
-      .map((v) => Variable(v))
-      .seq(char('.').seq(simpleId).pick(1).star())
-      .map<Variable>((v) => (v[1] as List).fold(v[0], (a, b) => a.subIndex(b)))
-      .trim();
+  Parser<Expression> get expression => ExpressionParser().expression.trim();
 
   Parser<String> get comma => char(',').trim();
 
@@ -71,7 +69,7 @@ class IcuParser {
 
   SettableParser<IntlMessage> interiorText = undefined();
 
-  Parser<Variable> get preface => (openCurly & id & comma).pick(1);
+  Parser<Expression> get preface => (openCurly & expression & comma).pick(1);
 
   Parser<String> get numberLiteral => string('number');
 
@@ -150,9 +148,10 @@ class IcuParser {
       .map((values) => CustomFormatMessage(values.first, values[1],
           values[2].map<String>((v) => v as String).toList()));
 
-  Parser<VariableSubstitution> get parameter => (openCurly & id & closeCurly)
-      .pick(1)
-      .map((param) => VariableSubstitution(param));
+  Parser<ExpressionSubstitution> get parameter =>
+      (openCurly & expression & closeCurly)
+          .pick(1)
+          .map((param) => ExpressionSubstitution(param));
 
   Parser get variable =>
       intlNumber |

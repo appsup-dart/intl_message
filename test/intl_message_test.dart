@@ -664,4 +664,36 @@ void main() async {
       });
     });
   });
+
+  group('Expressions', () {
+    test('basic expressions', () {
+      expect(IntlMessage('{1+2}').format({}), '3');
+
+      IntlMessage.withFormatters({'join': (l) => (l as List).join()}, () {
+        expect(IntlMessage('{[1,2,3], join}').format({}), '123');
+      });
+
+      var m = IntlMessage(
+          '{"male", select, male {He} female {She} other {They}} will respond shortly.');
+      expect(m.format({}), 'He will respond shortly.');
+
+      m = IntlMessage(
+          'You have {1+4*2, plural, =0 {no items} one {1 item} other {many items}}.');
+
+      expect(m.format({}), 'You have many items.');
+    });
+    test('member expressions', () {
+      expect(
+          IntlMessage('{a.b}').format({
+            'a': {'b': 1}
+          }),
+          '1');
+    });
+    test('method call expressions', () {
+      var context = {'sayHello': ([to = 'world']) => 'hello $to'};
+      expect(IntlMessage('{sayHello("everyone")}').format(context),
+          'hello everyone');
+      expect(IntlMessage('{sayHello()}').format(context), 'hello world');
+    });
+  });
 }
