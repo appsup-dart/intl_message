@@ -6,6 +6,7 @@ import 'package:intl_message/src/intl/ordinal_rules.dart' as ordinal_rules;
 import 'dart:async';
 import 'src/parser.dart';
 import 'package:expressions/expressions.dart';
+import 'package:petitparser/petitparser.dart';
 
 part 'src/message.dart';
 
