@@ -15,8 +15,8 @@ Parses and formats [ICU Message strings](http://userguide.icu-project.org/format
     print(str);
     
     msg = new IntlMessage({
-      "nl": "Toon is geboren op {now, date, long}",
-      "en": "Toon was born on {now, date, long}",
+      "nl": "Toon is geboren op {birthday, date, long}",
+      "en": "Toon was born on {birthday, date, long}",
     });
     
     IntlMessage.withLocale("nl", () {
