@@ -79,7 +79,7 @@ class ExpressionSubstitution implements IntlMessage {
 class NumberMessage extends ExpressionSubstitution {
   final String numberFormat;
 
-  NumberMessage(Variable name, this.numberFormat) : super(name);
+  NumberMessage(Expression name, this.numberFormat) : super(name);
 
   NumberFormat get _numberFormat {
     switch (numberFormat ?? 'decimal') {
@@ -129,11 +129,11 @@ class DateTimeMessage extends ExpressionSubstitution {
   final String dateTimeFormat;
   final String type;
 
-  DateTimeMessage.date(Variable name, this.dateTimeFormat)
+  DateTimeMessage.date(Expression name, this.dateTimeFormat)
       : type = 'date',
         super(name);
 
-  DateTimeMessage.time(Variable name, this.dateTimeFormat)
+  DateTimeMessage.time(Expression name, this.dateTimeFormat)
       : type = 'time',
         super(name);
 
