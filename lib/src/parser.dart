@@ -76,7 +76,7 @@ class IcuParser {
           numberLiteral &
           (comma & icuText.plus().flatten().trim()).pick(1).optional() &
           closeCurly)
-      .map((values) => NumberMessage(values[0], values[2]));
+      .map((values) => NumberMessage(values[0], values[2] ?? 'decimal'));
 
   Parser<String> get dateLiteral => string('date');
 

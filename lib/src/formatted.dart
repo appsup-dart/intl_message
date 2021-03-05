@@ -29,7 +29,7 @@ class _MyEvaluator extends ExpressionEvaluator {
 }
 
 class ExpressionSubstitution implements IntlMessage {
-  final Expression /*!*/ name;
+  final Expression name;
   final bool fallbackToNullWhenEvaluationFails;
 
   ExpressionSubstitution(this.name,
@@ -48,7 +48,7 @@ class ExpressionSubstitution implements IntlMessage {
   }
 
   FutureOr<String> _format(dynamic v, Map<String, dynamic> args,
-      {ErrorHandler /*?*/ onError}) {
+      {ErrorHandler? onError}) {
     try {
       return formatter(v, args);
     } catch (e) {
@@ -58,8 +58,7 @@ class ExpressionSubstitution implements IntlMessage {
   }
 
   @override
-  FutureOr<String> format(Map<String, dynamic> args,
-      {ErrorHandler /*?*/ onError}) {
+  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler? onError}) {
     try {
       var v = _evaluate(args);
       if (v is Future) return v.then((v) => _format(v, args, onError: onError));
@@ -83,7 +82,7 @@ class NumberMessage extends ExpressionSubstitution {
   NumberMessage(Expression name, this.numberFormat) : super(name);
 
   NumberFormat get _numberFormat {
-    switch (numberFormat ?? 'decimal') {
+    switch (numberFormat) {
       case 'integer':
         return NumberFormat('0');
       case 'decimal':
@@ -132,8 +131,8 @@ class DateTimeMessage extends ExpressionSubstitution {
     'full': 'jms z',
   };
 
-  final String dateTimeFormat;
-  final Map<String/*?*/, String> _formats;
+  final String? dateTimeFormat;
+  final Map<String?, String> _formats;
 
   DateTimeMessage.date(Expression name, this.dateTimeFormat)
       : _formats = _dateFormats,
@@ -164,7 +163,7 @@ class DateTimeMessage extends ExpressionSubstitution {
 
 class CustomFormatMessage extends ExpressionSubstitution {
   final String formatName;
-  final List<String> /*!*/ arguments;
+  final List<String> arguments;
 
   CustomFormatMessage(Expression name, this.formatName, this.arguments)
       : super(name, fallbackToNullWhenEvaluationFails: true);

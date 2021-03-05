@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- Null safety
+
 ## 0.2.0
 
 - added `onError` argument to format

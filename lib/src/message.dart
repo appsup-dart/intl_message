@@ -1,10 +1,9 @@
 part of intl_message;
 
-typedef ErrorHandler = String Function(IntlMessage, Exception);
+typedef ErrorHandler = String Function(IntlMessage, Object);
 
 abstract class IntlMessage {
-  FutureOr<String> format(Map<String, dynamic> args,
-      {ErrorHandler /*?*/ onError});
+  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler? onError});
 
   factory IntlMessage(stringOrMap) {
     if (stringOrMap is String) {
@@ -21,7 +20,7 @@ abstract class IntlMessage {
     throw ArgumentError('Expected String or Map');
   }
 
-  static T /*!*/ withLocale<T>(String locale, T Function() function) {
+  static T withLocale<T>(String locale, T Function() function) {
     return Intl.withLocale(locale, function);
   }
 
@@ -41,8 +40,7 @@ abstract class IntlMessage {
 
   static String get currentLocale => Intl.getCurrentLocale();
 
-  static String /*?*/ get currentCurrency =>
-      Zone.current[#IntlMessage.currency];
+  static String? get currentCurrency => Zone.current[#IntlMessage.currency];
 
   static Map<String, Function> get formatters =>
       Zone.current[#IntlMessage.formatters] ?? const {};
@@ -54,8 +52,7 @@ class LiteralString implements IntlMessage {
   LiteralString(this.string);
 
   @override
-  String format(Map<String, dynamic> args, {ErrorHandler /*?*/ onError}) =>
-      string;
+  String format(Map<String, dynamic> args, {ErrorHandler? onError}) => string;
 
   @override
   String toString() => string;
@@ -70,8 +67,7 @@ class ComposedMessage implements IntlMessage {
   ComposedMessage(this.messages);
 
   @override
-  FutureOr<String> format(Map<String, dynamic> args,
-      {ErrorHandler /*?*/ onError}) {
+  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler? onError}) {
     var parts = messages.map((v) => v.format(args, onError: onError));
     if (parts.every((element) => element is String)) {
       return parts.join();

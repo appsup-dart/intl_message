@@ -7,10 +7,10 @@ class MultiLanguageMessage implements IntlMessage {
 
   @override
   FutureOr<String> format(Map<String, dynamic> args,
-      {ErrorHandler /*?*/ onError}) {
+      {ErrorHandler? onError}) {
     var locale = IntlMessage.currentLocale;
     var verifiedLocale = Intl.verifiedLocale(locale, languageMap.containsKey,
-        onFailure: (locale) => 'default') /*!*/;
+        onFailure: (locale) => 'default')!;
     var message = languageMap[verifiedLocale];
     if (message == null) {
       var e = Exception(
