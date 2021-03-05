@@ -16,12 +16,11 @@ void startRuleEvaluation(int howMany) {
 // not introduce a subclass per locale or have instance tear-offs which
 // we can't cache. This is fine as long as these methods aren't async, which
 // they should never be.
-int _n;
+int _n = -1;
 
 /// The integer part of [_n] - since we only support integers, it's the same as
 /// [_n].
 int get _i => _n;
-int opt_precision; // Not currently used.
 
 // http://www.unicode.org/repos/cldr/trunk/common/supplemental/ordinals.xml
 
@@ -283,7 +282,7 @@ PluralCase _cy_rule() {
   return PluralCase.OTHER;
 }
 
-final Map pluralRules = {
+const pluralRules = <String, PluralCase Function()>{
   'default': _default_rule,
   'sv': _sv_rule,
   'fil': _fil_rule,

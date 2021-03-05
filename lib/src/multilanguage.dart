@@ -6,18 +6,19 @@ class MultiLanguageMessage implements IntlMessage {
   MultiLanguageMessage(this.languageMap);
 
   @override
-  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler onError}) {
+  FutureOr<String> format(Map<String, dynamic> args,
+      {ErrorHandler /*?*/ onError}) {
     var locale = IntlMessage.currentLocale;
     var verifiedLocale = Intl.verifiedLocale(locale, languageMap.containsKey,
-        onFailure: (locale) => 'default');
+        onFailure: (locale) => 'default') /*!*/;
     var message = languageMap[verifiedLocale];
     if (message == null) {
-      return onError(
-          this,
-          Exception(
-              'No message available for locale $locale')); // TODO make custom exception
+      var e = Exception(
+          'No message available for locale $locale'); // TODO make custom exception
+      if (onError == null) throw e;
+      return onError(this, e);
     }
-    return languageMap[verifiedLocale].format(args, onError: onError);
+    return message.format(args, onError: onError);
   }
 
   @override

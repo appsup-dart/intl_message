@@ -1,17 +1,16 @@
 library intl_message.parser;
 
+import 'package:expressions/expressions.dart';
+import 'package:expressions/src/parser.dart';
 import 'package:intl_message/intl_message.dart';
 import 'package:petitparser/petitparser.dart';
-import 'package:expressions/src/parser.dart';
-import 'package:expressions/expressions.dart';
 
 class IcuParser {
   Parser<String> get openCurly => char('{');
 
   Parser<String> get closeCurly => char('}');
 
-  Parser<String> get quotedCurly =>
-      (string("'{'") | string("'}'")).map((x) => x[1]);
+  Parser get quotedCurly => (string("'{'") | string("'}'"));
 
   Parser get icuEscapedText => quotedCurly | twoSingleQuotes;
 

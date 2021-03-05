@@ -1,12 +1,12 @@
 part of intl_message;
 
 abstract class SubMessage extends ExpressionSubstitution {
-  final Map<String, IntlMessage> messages;
+  final Map<String, IntlMessage> /*!*/ messages;
 
   SubMessage(Expression name, this.messages)
       : super(name, fallbackToNullWhenEvaluationFails: true);
 
-  String _index(dynamic v);
+  String /*!*/ _index(covariant dynamic v);
 
   String get _type;
 
@@ -30,7 +30,7 @@ class SelectMessage extends SubMessage {
       : super(name, messages);
 
   @override
-  String _index(v) => v;
+  String _index(String v) => v;
 
   @override
   String get _type => 'select';
@@ -47,8 +47,8 @@ class SelectOrdinalMessage extends PluralMessage {
     ordinal_rules.startRuleEvaluation(howMany);
     var verifiedLocale = Intl.verifiedLocale(
         locale, ordinal_rules.localeHasPluralRules,
-        onFailure: (locale) => 'default');
-    return ordinal_rules.pluralRules[verifiedLocale]();
+        onFailure: (locale) => 'default') /*!*/;
+    return ordinal_rules.pluralRules[verifiedLocale] /*!*/ ();
   }
 
   @override
@@ -63,8 +63,9 @@ class PluralMessage extends SubMessage {
       : super(name, messages);
 
   @override
-  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler onError}) {
-    var s = super.format(args);
+  FutureOr<String> format(Map<String, dynamic> args,
+      {ErrorHandler /*?*/ onError}) {
+    var s = super.format(args, onError: onError);
     return _replace(s, args);
   }
 
@@ -87,8 +88,8 @@ class PluralMessage extends SubMessage {
     plural_rules.startRuleEvaluation(howMany);
     var verifiedLocale = Intl.verifiedLocale(
         locale, plural_rules.localeHasPluralRules,
-        onFailure: (locale) => 'default');
-    return plural_rules.pluralRules[verifiedLocale]();
+        onFailure: (locale) => 'default') /*!*/;
+    return plural_rules.pluralRules[verifiedLocale] /*!*/ ();
   }
 
   @override
@@ -100,14 +101,20 @@ class PluralMessage extends SubMessage {
     if (messages.containsKey('=$v')) {
       return '=$v';
     }
-    return const {
-      plural_rules.PluralCase.ZERO: 'zero',
-      plural_rules.PluralCase.ONE: 'one',
-      plural_rules.PluralCase.TWO: 'two',
-      plural_rules.PluralCase.FEW: 'few',
-      plural_rules.PluralCase.MANY: 'many',
-      plural_rules.PluralCase.OTHER: 'other',
-    }[_pluralCase(v - offset)];
+    switch (_pluralCase(v - offset)) {
+      case plural_rules.PluralCase.ZERO:
+        return 'zero';
+      case plural_rules.PluralCase.ONE:
+        return 'one';
+      case plural_rules.PluralCase.TWO:
+        return 'two';
+      case plural_rules.PluralCase.FEW:
+        return 'few';
+      case plural_rules.PluralCase.MANY:
+        return 'many';
+      case plural_rules.PluralCase.OTHER:
+        return 'other';
+    }
   }
 
   @override

@@ -29,7 +29,7 @@ class _MyEvaluator extends ExpressionEvaluator {
 }
 
 class ExpressionSubstitution implements IntlMessage {
-  final Expression name;
+  final Expression /*!*/ name;
   final bool fallbackToNullWhenEvaluationFails;
 
   ExpressionSubstitution(this.name,
@@ -48,7 +48,7 @@ class ExpressionSubstitution implements IntlMessage {
   }
 
   FutureOr<String> _format(dynamic v, Map<String, dynamic> args,
-      {ErrorHandler onError}) {
+      {ErrorHandler /*?*/ onError}) {
     try {
       return formatter(v, args);
     } catch (e) {
@@ -58,7 +58,8 @@ class ExpressionSubstitution implements IntlMessage {
   }
 
   @override
-  FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler onError}) {
+  FutureOr<String> format(Map<String, dynamic> args,
+      {ErrorHandler /*?*/ onError}) {
     try {
       var v = _evaluate(args);
       if (v is Future) return v.then((v) => _format(v, args, onError: onError));
@@ -96,7 +97,13 @@ class NumberMessage extends ExpressionSubstitution {
     }
   }
 
-  num _toNum(v) => v is num ? v : v is String ? num.parse(v) : v;
+  num _toNum(v) {
+    if (v == null) throw ArgumentError.notNull();
+    if (v is String) {
+      return num.parse(v);
+    }
+    return v as num;
+  }
 
   @override
   String formatter(v, Map<String, dynamic> args) =>
@@ -107,44 +114,48 @@ class NumberMessage extends ExpressionSubstitution {
 }
 
 class DateTimeMessage extends ExpressionSubstitution {
-  static const formats = {
-    'date': {
-      'short': 'yMd',
-      'medium': 'yMMMd',
-      'default': 'yMMMd',
-      null: 'yMMMd',
-      'long': 'yMMMMd',
-      'full': 'yMMMMEEEEd',
-    },
-    'time': {
-      'short': 'jm',
-      'medium': 'jms',
-      'default': 'jms',
-      null: 'jms',
-      'long': 'jms z',
-      'full': 'jms z',
-    }
+  static const _dateFormats = {
+    'short': 'yMd',
+    'medium': 'yMMMd',
+    'default': 'yMMMd',
+    null: 'yMMMd',
+    'long': 'yMMMMd',
+    'full': 'yMMMMEEEEd',
+  };
+
+  static const _timeFormats = {
+    'short': 'jm',
+    'medium': 'jms',
+    'default': 'jms',
+    null: 'jms',
+    'long': 'jms z',
+    'full': 'jms z',
   };
 
   final String dateTimeFormat;
-  final String type;
+  final Map<String/*?*/, String> _formats;
 
   DateTimeMessage.date(Expression name, this.dateTimeFormat)
-      : type = 'date',
+      : _formats = _dateFormats,
         super(name);
 
   DateTimeMessage.time(Expression name, this.dateTimeFormat)
-      : type = 'time',
+      : _formats = _timeFormats,
         super(name);
 
-  DateTime _toDateTime(v) => (v is String
-          ? DateTime.parse(v.replaceAll('UTC', 'Z'))
-          : v is num ? DateTime.fromMillisecondsSinceEpoch(v.toInt()) : v)
-      ?.toLocal();
+  DateTime _toDateTime(v) {
+    if (v == null) throw ArgumentError.notNull();
+    return (v is String
+            ? DateTime.parse(v.replaceAll('UTC', 'Z'))
+            : v is num
+                ? DateTime.fromMillisecondsSinceEpoch(v.toInt())
+                : v as DateTime)
+        .toLocal();
+  }
 
   @override
   String formatter(v, Map<String, dynamic> args) =>
-      DateFormat(formats[type][dateTimeFormat] ?? dateTimeFormat)
+      DateFormat(_formats[dateTimeFormat] ?? dateTimeFormat)
           .format(_toDateTime(v));
 
   @override
@@ -153,15 +164,19 @@ class DateTimeMessage extends ExpressionSubstitution {
 
 class CustomFormatMessage extends ExpressionSubstitution {
   final String formatName;
-  final List<String> arguments;
+  final List<String> /*!*/ arguments;
 
   CustomFormatMessage(Expression name, this.formatName, this.arguments)
       : super(name, fallbackToNullWhenEvaluationFails: true);
 
   @override
-  FutureOr<String> formatter(covariant v, Map<String, dynamic> args) =>
-      _toString(Function.apply(
-          IntlMessage.formatters[formatName], [v, ...arguments]));
+  FutureOr<String> formatter(covariant v, Map<String, dynamic> args) {
+    var f = IntlMessage.formatters[formatName];
+    if (f == null) {
+      throw StateError('No formatter with name $formatName defined');
+    }
+    return _toString(Function.apply(f, [v, ...arguments]));
+  }
 
   @override
   String toString() =>

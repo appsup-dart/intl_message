@@ -473,7 +473,8 @@ void main() async {
 
   group('arguments with', () {
     group('no spaces', () {
-      var msg = IntlMessage('{STATE}'), state = 'Missouri';
+      var msg = IntlMessage('{STATE}');
+      var state = 'Missouri';
 
       test('should fail when the argument in the pattern is not provided', () {
         expect(() => msg.format({}), throwsA(isA<ArgumentError>()));
@@ -490,7 +491,8 @@ void main() async {
     });
 
     group('a numeral', () {
-      var msg = IntlMessage('{ST1ATE}'), state = 'Missouri';
+      var msg = IntlMessage('{ST1ATE}');
+      var state = 'Missouri';
 
       test('should fail when the argument in the pattern is not provided', () {
         expect(() => msg.format({'FOO': state}), throwsA(isA<ArgumentError>()));
@@ -694,6 +696,25 @@ void main() async {
       expect(IntlMessage('{sayHello("everyone")}').format(context),
           'hello everyone');
       expect(IntlMessage('{sayHello()}').format(context), 'hello world');
+    });
+  });
+
+  group('Type errors', () {
+    test('NumberMessage should throw when not a number or parseable', () {
+      expect(() => IntlMessage('{N, number, integer}').format({'N': 'qdf'}),
+          throwsA(isA<FormatException>()));
+      expect(() => IntlMessage('{N, number, integer}').format({'N': null}),
+          throwsA(isA<ArgumentError>()));
+      expect(() => IntlMessage('{N, number, integer}').format({'N': true}),
+          throwsA(isA<TypeError>()));
+    });
+    test('DateTimeMessage should throw when not a DateTime or parseable', () {
+      expect(() => IntlMessage('{N, number, integer}').format({'N': 'qdf'}),
+          throwsA(isA<FormatException>()));
+      expect(() => IntlMessage('{N, number, integer}').format({'N': null}),
+          throwsA(isA<ArgumentError>()));
+      expect(() => IntlMessage('{N, number, integer}').format({'N': true}),
+          throwsA(isA<TypeError>()));
     });
   });
 }
