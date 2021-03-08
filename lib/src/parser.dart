@@ -127,7 +127,10 @@ class IcuParser {
   Parser<String> get selectLiteral => string('select');
 
   Parser<List> get selectClause =>
-      (simpleId.trim() & openCurly & interiorText & closeCurly)
+      (messageText.map((v) => v.trim().format(const {})) &
+              openCurly &
+              interiorText &
+              closeCurly)
           .trim()
           .permute([0, 2]);
 

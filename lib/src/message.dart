@@ -52,13 +52,23 @@ class LiteralString implements IntlMessage {
   LiteralString(this.string);
 
   @override
-  String format(Map<String, dynamic> args, {ErrorHandler? onError}) => string;
+  String format(Map<String, dynamic> args, {ErrorHandler? onError}) =>
+      string.replaceAllMapped(
+          RegExp("'(.)", dotAll: true), (match) => match.group(1)!);
 
   @override
   String toString() => string;
 
   @override
   String toJson() => toString();
+
+  /// Removes non-escaped whitespaces
+  LiteralString trim() {
+    var s = string;
+    s = s.replaceFirst(RegExp(r'^\s*'), '');
+    s = s.replaceFirstMapped(RegExp(r"([^'])\s*$"), (m) => m.group(1)!);
+    return LiteralString(s);
+  }
 }
 
 class ComposedMessage implements IntlMessage {

@@ -699,6 +699,28 @@ void main() async {
     });
   });
 
+  group('literal strings', () {
+    test('trim LiteralString', () {
+      expect(
+          LiteralString(' hello world \n ').trim().format({}), 'hello world');
+      expect(
+          LiteralString(' hello world\' ').trim().format({}), 'hello world ');
+      expect(LiteralString('\' hello world').trim().format({}), ' hello world');
+      expect(
+          LiteralString('hello world\'\n').trim().format({}), 'hello world\n');
+      expect(LiteralString('  ').trim().format({}), '');
+    });
+    test('parse general strings as select keys', () {
+      expect(
+          IntlMessage('{N, select, hello world {greeting} other {no greeting}}')
+              .format({'N': 'hello world'}),
+          'greeting');
+      expect(
+          IntlMessage('{N, select, --some-id-- {greeting} other {no greeting}}')
+              .format({'N': '--some-id--'}),
+          'greeting');
+    });
+  });
   group('Type errors', () {
     test('NumberMessage should throw when not a number or parseable', () {
       expect(() => IntlMessage('{N, number, integer}').format({'N': 'qdf'}),
