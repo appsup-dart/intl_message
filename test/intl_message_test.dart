@@ -150,7 +150,7 @@ void main() async {
             'Neem die 1e afdraai na regs.');
       });
       var m = IntlMessage(
-          "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!");
+          "It''s my cat''s {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!");
       expect(m.format({'year': 1}), "It's my cat's 1st birthday!");
       expect(m.format({'year': 2}), "It's my cat's 2nd birthday!");
       expect(m.format({'year': 3}), "It's my cat's 3rd birthday!");
@@ -637,7 +637,7 @@ void main() async {
           await m.format({'itemCount': Future.value(0)}), 'You have no items.');
 
       m = IntlMessage(
-          "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!");
+          "It''s my cat''s {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!");
       expect(await m.format({'year': Future.value(4)}),
           "It's my cat's 4th birthday!");
     });
