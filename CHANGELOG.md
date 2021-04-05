@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Support petitparser 4.1.0
+
 ## 0.3.0
 
 - Null safety

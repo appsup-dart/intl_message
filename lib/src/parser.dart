@@ -68,7 +68,8 @@ class IcuParser {
 
   SettableParser<IntlMessage> interiorText = undefined();
 
-  Parser<Expression> get preface => (openCurly & expression & comma).pick(1);
+  Parser<Expression> get preface =>
+      (openCurly & expression & comma).pick(1).cast();
 
   Parser<String> get numberLiteral => string('number');
 
@@ -109,7 +110,9 @@ class IcuParser {
       pluralClause.plus().map((l) => {for (var v in l) v.first: v.last});
 
   Parser<int> get offset =>
-      (string('offset:') & digit().plus().flatten().map(int.parse)).pick(1);
+      (string('offset:') & digit().plus().flatten().map(int.parse))
+          .pick(1)
+          .cast();
 
   Parser get plural =>
       preface &
