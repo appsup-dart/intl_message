@@ -19,7 +19,7 @@ abstract class SubMessage extends ExpressionSubstitution {
 
   @override
   String toString() =>
-      '{$name, $_type, ${messages.keys.map((k) => '$k {${messages[k]}}').join(' ')}';
+      '{$name, $_type, ${messages.keys.map((k) => '$k {${messages[k]}}').join(' ')}}';
 
   @override
   String toJson() => toString();
