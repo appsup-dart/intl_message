@@ -1,3 +1,7 @@
+## 0.3.2+1
+
+ - **FIX**: missing } in toString().
+
 ## 0.3.2
 
  - **FEAT**: Support intl v0.19.0 and petitparser v5.0.0.
