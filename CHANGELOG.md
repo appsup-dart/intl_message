@@ -1,3 +1,7 @@
+## 0.3.2+2
+
+ - **FIX**: remove print statement when variable not found.
+
 ## 0.3.2+1
 
  - **FIX**: missing } in toString().
