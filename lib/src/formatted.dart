@@ -21,8 +21,8 @@ class _MyEvaluator extends ExpressionEvaluator {
   @override
   dynamic evalVariable(Variable variable, Map<String, dynamic> context) {
     if (!context.containsKey(variable.identifier.name)) {
-      print(variable.identifier.name);
-      throw ArgumentError();
+      throw ArgumentError(
+          'Variable ${variable.identifier.name} not in context');
     }
     return super.evalVariable(variable, context);
   }
