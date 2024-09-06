@@ -35,7 +35,7 @@ void main() async {
             'Solden beginnen 3-11-2017');
         expect(
             IntlMessage('Solden beginnen {start, date, medium}').format(args),
-            'Solden beginnen 3 nov. 2017');
+            'Solden beginnen 3 nov 2017');
         expect(IntlMessage('Solden beginnen {start, date, long}').format(args),
             'Solden beginnen 3 november 2017');
         expect(IntlMessage('Solden beginnen {start, date, full}').format(args),
@@ -58,10 +58,10 @@ void main() async {
       var args = {'expires': time};
       expect(
           IntlMessage('Coupon expires at {expires, time, short}').format(args),
-          'Coupon expires at 2:30 PM');
+          'Coupon expires at 2:30 PM');
       expect(
           IntlMessage('Coupon expires at {expires, time, medium}').format(args),
-          'Coupon expires at 2:30:00 PM');
+          'Coupon expires at 2:30:00 PM');
     });
 
     test('Custom format', () {
@@ -230,7 +230,7 @@ void main() async {
       var now = DateTime(2000, 1, 1, 23, 26, 35);
 
       expect(IntlMessage('The time is now {T, time}').format({'T': now}),
-          'The time is now 11:26:35 PM');
+          'The time is now 11:26:35 PM');
 
       Intl.withLocale('fi', () {
         expect(IntlMessage('Kello on nyt {T, time}').format({'T': now}),
@@ -240,7 +240,7 @@ void main() async {
       expect(
           IntlMessage('The Eagle landed at {T, time} on {T, date, full}')
               .format({'T': '1969-07-20 21:17:40'}),
-          'The Eagle landed at 9:17:40 PM on Sunday, July 20, 1969');
+          'The Eagle landed at 9:17:40 PM on Sunday, July 20, 1969');
     });
 
     test('custom formatters', () {
@@ -603,7 +603,7 @@ void main() async {
       expect(
           await IntlMessage('Coupon expires at {expires, time, medium}')
               .format(args),
-          'Coupon expires at 2:30:00 PM');
+          'Coupon expires at 2:30:00 PM');
 
       await Intl.withLocale('nl', () async {
         expect(
