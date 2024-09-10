@@ -158,7 +158,8 @@ class DateTimeMessage extends ExpressionSubstitution {
           .format(_toDateTime(v));
 
   @override
-  String toString() => '{$name, type, $dateTimeFormat}';
+  String toString() =>
+      '{$name, ${_formats == _dateFormats ? 'date' : 'time'}, $dateTimeFormat}';
 }
 
 class CustomFormatMessage extends ExpressionSubstitution {

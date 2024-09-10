@@ -739,4 +739,45 @@ void main() async {
           throwsA(isA<TypeError>()));
     });
   });
+
+  group('serialization', () {
+    test('simple substition', () {
+      var m = IntlMessage('Hello {who}');
+      expect(m.toJson(), 'Hello {who}');
+    });
+    test('date substition', () {
+      var m = IntlMessage('{start, date, dd/MM/yyyy}');
+      expect(m.toJson(), '{start, date, dd/MM/yyyy}');
+
+      m = IntlMessage('{start, time, long}');
+      expect(m.toJson(), '{start, time, long}');
+    });
+    test('number substition', () {
+      var m = IntlMessage('{value, number, integer}');
+      expect(m.toJson(), '{value, number, integer}');
+
+      m = IntlMessage('{value, number, #,##0.00}');
+      expect(m.toJson(), '{value, number, #,##0.00}');
+    });
+    test('custom formatters', () {
+      var m = IntlMessage('This is {VAR, upcase}.');
+      expect(m.toJson(), 'This is {VAR, upcase}.');
+
+      m = IntlMessage('The current locale is {_, locale}.');
+      expect(m.toJson(), 'The current locale is {_, locale}.');
+
+      m = IntlMessage('Answer: {obj, prop, a}');
+      expect(m.toJson(), 'Answer: {obj, prop, a}');
+    });
+    test('multi language message', () {
+      var m = IntlMessage({
+        'en': 'Hello {who}',
+        'nl': 'Hallo {who}',
+      });
+      expect(m.toJson(), {
+        'en': 'Hello {who}',
+        'nl': 'Hallo {who}',
+      });
+    });
+  });
 }
