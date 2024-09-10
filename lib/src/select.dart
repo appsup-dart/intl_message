@@ -1,4 +1,4 @@
-part of intl_message;
+part of '../intl_message.dart';
 
 abstract class SubMessage extends ExpressionSubstitution {
   final Map<String, IntlMessage> messages;
@@ -93,7 +93,7 @@ class PluralMessage extends SubMessage {
 
   @override
   String _index(v) {
-    if (!(v is int)) {
+    if (v is! int) {
       throw ArgumentError(
           'Expected argument $name to be of type int, was ${v.runtimeType} ($v)');
     }

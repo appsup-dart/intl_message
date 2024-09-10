@@ -1,4 +1,6 @@
 /// Based on the code of the intl package for plural rules
+// ignore_for_file: non_constant_identifier_names
+
 library ordinal_rules;
 
 import 'package:intl/src/plural_rules.dart';

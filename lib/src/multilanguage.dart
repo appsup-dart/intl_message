@@ -1,4 +1,4 @@
-part of intl_message;
+part of '../intl_message.dart';
 
 class MultiLanguageMessage implements IntlMessage {
   final Map<String, IntlMessage> languageMap;

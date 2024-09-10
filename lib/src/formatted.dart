@@ -1,4 +1,4 @@
-part of intl_message;
+part of '../intl_message.dart';
 
 FutureOr<String> _toString(dynamic v) {
   if (v is Future) return v.then(_toString);

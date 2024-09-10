@@ -1,4 +1,4 @@
-part of intl_message;
+part of '../intl_message.dart';
 
 typedef ErrorHandler = String Function(IntlMessage, Object);
 
@@ -8,7 +8,7 @@ abstract class IntlMessage {
   factory IntlMessage(stringOrMap) {
     if (stringOrMap is String) {
       var r = IcuParser().message.end().parse(stringOrMap);
-      if (r.isSuccess) return r.value;
+      if (r is Success) return r.value;
       throw ArgumentError(
           "Unable to parse IntlMessage (${r.message}) '$stringOrMap'");
     }
