@@ -1,3 +1,7 @@
+## 0.3.2+4
+
+ - **FIX**: serialization of date/time messages.
+
 ## 0.3.2+3
 
  - **REFACTOR**: support for intl ^0.19.0.

@@ -1,6 +1,6 @@
 name: intl_message
 description: Parses and formats ICU Message strings. Formats strings in multiple languages.
-version: 0.3.2+3
+version: 0.3.2+4
 homepage: https://github.com/appsup-dart/intl_message
 funding:
  - https://github.com/sponsors/rbellens
