@@ -1,3 +1,7 @@
+## 0.3.2+5
+
+ - **REFACTOR**: support for petitparser: ^6.0.0.
+
 ## 0.3.2+4
 
  - **FIX**: serialization of date/time messages.
