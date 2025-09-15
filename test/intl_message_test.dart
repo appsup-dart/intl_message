@@ -199,7 +199,7 @@ void main() async {
 
       Intl.withLocale('fi', () {
         expect(IntlMessage('Tänään on {T, date}').format({'T': date}),
-            'Tänään on 21. helmik. 2016');
+            'Tänään on 21.2.2016');
       });
       expect(
           IntlMessage('Unix time started on {T, date, full}')
