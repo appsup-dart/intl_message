@@ -5,7 +5,7 @@ typedef ErrorHandler = String Function(IntlMessage, Object);
 abstract class IntlMessage {
   FutureOr<String> format(Map<String, dynamic> args, {ErrorHandler? onError});
 
-  factory IntlMessage(stringOrMap) {
+  factory IntlMessage(dynamic stringOrMap) {
     if (stringOrMap is String) {
       var r = IcuParser().message.end().parse(stringOrMap);
       if (r is Success) return r.value;

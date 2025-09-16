@@ -35,7 +35,7 @@ class ExpressionSubstitution implements IntlMessage {
   ExpressionSubstitution(this.name,
       {this.fallbackToNullWhenEvaluationFails = false});
 
-  FutureOr<String> formatter(covariant v, Map<String, dynamic> args) =>
+  FutureOr<String> formatter(covariant dynamic v, Map<String, dynamic> args) =>
       _toString(v);
 
   dynamic _evaluate(Map<String, dynamic> args) {
@@ -96,7 +96,7 @@ class NumberMessage extends ExpressionSubstitution {
     }
   }
 
-  num _toNum(v) {
+  num _toNum(dynamic v) {
     if (v == null) throw ArgumentError.notNull();
     if (v is String) {
       return num.parse(v);
@@ -142,7 +142,7 @@ class DateTimeMessage extends ExpressionSubstitution {
       : _formats = _timeFormats,
         super(name);
 
-  DateTime _toDateTime(v) {
+  DateTime _toDateTime(dynamic v) {
     if (v == null) throw ArgumentError.notNull();
     return (v is String
             ? DateTime.parse(v.replaceAll('UTC', 'Z'))
