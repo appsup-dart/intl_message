@@ -1,3 +1,36 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## 2025-09-16
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`intl_message` - `v0.3.2+6`](#intl_message---v0326)
+
+---
+
+#### `intl_message` - `v0.3.2+6`
+
+ - **REFACTOR**: set min sdk to 3.0.0. ([6a8808e9](https://github.com/appsup-dart/intl_message/commit/6a8808e9e39f7be2b644618a41bdad01913c8624))
+ - **REFACTOR**: support for petitparser ^7.0.0. ([6fb27725](https://github.com/appsup-dart/intl_message/commit/6fb27725f6cefb606020688bdd70c7c449e0c078))
+ - **REFACTOR**: upgrade to intl ^0.20.0. ([fc4ed6c6](https://github.com/appsup-dart/intl_message/commit/fc4ed6c63225e4e17f8172836fd5c57c657978d3))
+
+## 0.3.2+6
+
+ - **REFACTOR**: set min sdk to 3.0.0. ([6a8808e9](https://github.com/appsup-dart/intl_message/commit/6a8808e9e39f7be2b644618a41bdad01913c8624))
+ - **REFACTOR**: support for petitparser ^7.0.0. ([6fb27725](https://github.com/appsup-dart/intl_message/commit/6fb27725f6cefb606020688bdd70c7c449e0c078))
+ - **REFACTOR**: upgrade to intl ^0.20.0. ([fc4ed6c6](https://github.com/appsup-dart/intl_message/commit/fc4ed6c63225e4e17f8172836fd5c57c657978d3))
+
 ## 0.3.2+5
 
  - **REFACTOR**: support for petitparser: ^6.0.0.
