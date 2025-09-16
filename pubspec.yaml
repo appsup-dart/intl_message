@@ -28,6 +28,7 @@ melos:
   command:
     version:
       linkToCommits: true
+      workspaceChangelog: false
 
   scripts:
     preversion: 
